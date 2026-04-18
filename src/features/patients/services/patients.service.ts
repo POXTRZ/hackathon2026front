@@ -125,10 +125,25 @@ export const patientsService = {
    */
   getAllHospitals: async (): Promise<Hospital[]> => {
     try {
-      const response = await axiosInstance.get<Hospital[]>("/hospitals");
+      const response = await axiosInstance.get<Hospital[]>(
+        `${API_ENDPOINTS.HOSPITALS}`,
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching hospitals:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Obtiene un hospital por ID
+   */
+  getHospitalById: async (id: string): Promise<Hospital> => {
+    try {
+      const response = await axiosInstance.get<Hospital>(`/hospitals/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching hospital ${id}:`, error);
       throw error;
     }
   },

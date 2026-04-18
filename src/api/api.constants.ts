@@ -3,4 +3,5 @@ export const API_ENDPOINTS = {
   PATIENTS: "/patients",
   REPORTS: "/reports",
   AI: "/ai",
+  HOSPITALS: "/hospitals",
 };
