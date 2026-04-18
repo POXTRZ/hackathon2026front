@@ -9,6 +9,19 @@ export interface Triage {
   score: number;
 }
 
+export interface Hospital {
+  _id: string;
+  name: string;
+  city: string;
+  state: string;
+  capacity: number;
+  icuBeds: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v?: number;
+}
+
 export interface Patient {
   _id: string;
   name: string;

@@ -1,43 +1,62 @@
 import React, { useState, useEffect } from "react";
 import {
   Search,
-  ChevronRight,
+  MoreVertical,
+  Plus,
   Zap,
   Volume2,
   MessageSquare,
   AlertCircle,
+  Edit,
+  Trash2,
+  ChevronDown,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { patientsService } from "../services/patients.service";
-import type { Patient } from "../../../types";
+import { AddPatientModal } from "./AddPatients";
+import type { Patient, Hospital } from "../../../types";
 
 export const RecordsView = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [selectedPriority, setSelectedPriority] = useState<string>("All");
+  const [selectedHospitalId, setSelectedHospitalId] = useState<string>("All");
+  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
+  const [filterMenuSection, setFilterMenuSection] = useState<
+    "main" | "priority" | "hospital"
+  >("main");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
 
-  // Fetch patients on component mount
+  // Fetch patients and hospitals on component mount
   useEffect(() => {
-    const fetchPatients = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await patientsService.getAllPatients();
-        setPatients(data);
+        const [patientsData, hospitalsData] = await Promise.all([
+          patientsService.getAllPatients(),
+          patientsService.getAllHospitals(),
+        ]);
+        setPatients(patientsData);
+        setHospitals(hospitalsData);
       } catch (err) {
-        console.error("Error fetching patients:", err);
+        console.error("Error fetching data:", err);
         setError(
-          "No se pudieron cargar los pacientes. Verifica que el servidor esté en puerto 4000.",
+          "No se pudieron cargar los datos. Verifica que el servidor esté en puerto 4000.",
         );
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPatients();
+    fetchData();
   }, []);
 
   // Helper function to map triage level to priority display
@@ -62,12 +81,84 @@ export const RecordsView = () => {
     return "Monitoreo";
   };
 
-  // Filter patients by search query
-  const filteredPatients = patients.filter(
-    (p) =>
+  // Filter patients by search query, priority, and hospital
+  const filteredPatients = patients.filter((p) => {
+    const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.diagnosis.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+      p.diagnosis.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Apply priority filter if selected
+    let matchesPriority = true;
+    if (selectedPriority !== "All") {
+      const priorityMap: Record<string, "Alta" | "Media" | "Baja"> = {
+        Crítica: "Alta",
+        Alta: "Alta",
+        Media: "Media",
+        Baja: "Baja",
+      };
+      const patientPriority = priorityMap[getPatientPriority(p.triage.level)];
+      matchesPriority = patientPriority === selectedPriority;
+    }
+
+    // Apply hospital filter if selected
+    let matchesHospital = true;
+    if (selectedHospitalId !== "All") {
+      matchesHospital = p.hospitalId === selectedHospitalId;
+    }
+
+    return matchesSearch && matchesPriority && matchesHospital;
+  });
+
+  // Get selected hospital name for display
+  const selectedHospitalName =
+    selectedHospitalId === "All"
+      ? "Todos"
+      : hospitals.find((h) => h._id === selectedHospitalId)?.name || "";
+
+  // Get hospital name by ID
+  const getHospitalName = (hospitalId: string): string => {
+    return hospitals.find((h) => h._id === hospitalId)?.name || hospitalId;
+  };
+
+  const handleAddPatient = () => {
+    setEditingPatient(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditPatient = (patient: Patient, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOpenMenuId(null);
+    setEditingPatient(patient);
+    setIsModalOpen(true);
+  };
+
+  const handleDeletePatient = async (patient: Patient, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOpenMenuId(null);
+    if (confirm(`¿Deseas eliminar a ${patient.name}?`)) {
+      try {
+        await patientsService.deletePatient(patient._id);
+        setPatients(patients.filter((p) => p._id !== patient._id));
+        alert("Paciente eliminado correctamente");
+      } catch (err) {
+        console.error("Error deleting patient:", err);
+        alert("Error al eliminar el paciente");
+      }
+    }
+  };
+
+  const handleModalSuccess = (patient: Patient) => {
+    if (editingPatient) {
+      // Actualizar paciente en la lista
+      setPatients(patients.map((p) => (p._id === patient._id ? patient : p)));
+      alert("Paciente actualizado correctamente");
+    } else {
+      // Agregar nuevo paciente a la lista
+      setPatients([...patients, patient]);
+      alert("Paciente creado correctamente");
+    }
+    setEditingPatient(null);
+  };
 
   const playVoice = () => {
     setIsPlayingVoice(true);
@@ -94,21 +185,174 @@ export const RecordsView = () => {
               Sincronización HL7 FHIR (1.2ms)
             </p>
           </div>
-          <div className="relative w-full md:w-80 group/search">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl blur opacity-20 group-hover/search:opacity-40 transition duration-500" />
-            <div className="relative bg-slate-900 ring-1 ring-slate-800 rounded-2xl flex items-center p-1 px-3">
-              <Search
-                className="text-slate-400 mr-2 group-focus-within/search:text-blue-400 transition-colors"
-                size={18}
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar por nombre o diagnóstico..."
-                className="w-full bg-transparent border-none py-2.5 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-0 leading-tight placeholder:tracking-wide font-medium"
-              />
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <button
+              onClick={handleAddPatient}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm transition-colors"
+            >
+              <Plus size={18} />
+              Agregar Paciente
+            </button>
+            <div className="relative w-full md:w-80 group/search">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl blur opacity-20 group-hover/search:opacity-40 transition duration-500" />
+              <div className="relative bg-slate-900 ring-1 ring-slate-800 rounded-2xl flex items-center p-1 px-3">
+                <Search
+                  className="text-slate-400 mr-2 group-focus-within/search:text-blue-400 transition-colors"
+                  size={18}
+                />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Buscar por nombre o diagnóstico..."
+                  className="w-full bg-transparent border-none py-2.5 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-0 leading-tight placeholder:tracking-wide font-medium"
+                />
+              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Filter Dropdown */}
+        <div className="flex gap-4 mb-12 relative items-center">
+          <div className="relative z-50">
+            <motion.button
+              onClick={() => {
+                setIsFilterMenuOpen(!isFilterMenuOpen);
+                setFilterMenuSection("main");
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-900/50 hover:bg-slate-800 border border-slate-800/50 hover:border-slate-700 rounded-lg text-xs font-bold text-slate-200 transition-colors"
+            >
+              <span className="uppercase tracking-wider">🔍 Filtros</span>
+              <ChevronDown
+                size={14}
+                className={`transition-transform ${isFilterMenuOpen ? "rotate-180" : ""}`}
+              />
+            </motion.button>
+
+            {/* Filter Menu */}
+            {isFilterMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                className="absolute top-full left-0 mt-2 w-56 bg-slate-900 border border-slate-700 rounded-lg shadow-2xl z-50 overflow-hidden"
+              >
+                {/* Main Menu */}
+                {filterMenuSection === "main" && (
+                  <div>
+                    <button
+                      onClick={() => setFilterMenuSection("priority")}
+                      className="w-full px-3 py-2 text-xs text-left transition-colors text-slate-300 hover:bg-slate-800/50 border-b border-slate-700/50 flex items-center justify-between"
+                    >
+                      <span>⭐ Por Prioridad</span>
+                      <ChevronDown size={12} className="rotate-180" />
+                    </button>
+                    <button
+                      onClick={() => setFilterMenuSection("hospital")}
+                      className="w-full px-3 py-2 text-xs text-left transition-colors text-slate-300 hover:bg-slate-800/50 flex items-center justify-between"
+                    >
+                      <span>🏥 Por Hospital</span>
+                      <ChevronDown size={12} className="rotate-180" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Priority Section */}
+                {filterMenuSection === "priority" && (
+                  <div>
+                    <button
+                      onClick={() => setFilterMenuSection("main")}
+                      className="w-full px-3 py-1.5 text-xs text-left transition-colors text-blue-300 hover:bg-slate-800/50 border-b border-slate-700/50 flex items-center gap-2"
+                    >
+                      <ChevronDown size={12} className="rotate-90" />
+                      <span>Volver</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedPriority("All");
+                        setFilterMenuSection("main");
+                      }}
+                      className={`w-full px-3 py-1.5 text-xs text-left transition-colors ${
+                        selectedPriority === "All"
+                          ? "bg-blue-500/20 text-blue-300 border-l-2 border-blue-500"
+                          : "text-slate-300 hover:bg-slate-800/50"
+                      }`}
+                    >
+                      Todas
+                    </button>
+                    {(["Crítica", "Alta", "Media", "Baja"] as const).map(
+                      (priority) => (
+                        <button
+                          key={priority}
+                          onClick={() => {
+                            setSelectedPriority(priority);
+                            setFilterMenuSection("main");
+                          }}
+                          className={`w-full px-3 py-1.5 text-xs text-left transition-colors flex items-center gap-2 ${
+                            selectedPriority === priority
+                              ? "bg-blue-500/20 text-blue-300 border-l-2 border-blue-500"
+                              : "text-slate-300 hover:bg-slate-800/50"
+                          }`}
+                        >
+                          <div
+                            className={`w-2 h-2 rounded-full ${
+                              priority === "Crítica" || priority === "Alta"
+                                ? "bg-red-500"
+                                : priority === "Media"
+                                  ? "bg-amber-500"
+                                  : "bg-emerald-500"
+                            }`}
+                          />
+                          {priority}
+                        </button>
+                      ),
+                    )}
+                  </div>
+                )}
+
+                {/* Hospital Section */}
+                {filterMenuSection === "hospital" && (
+                  <div>
+                    <button
+                      onClick={() => setFilterMenuSection("main")}
+                      className="w-full px-3 py-1.5 text-xs text-left transition-colors text-blue-300 hover:bg-slate-800/50 border-b border-slate-700/50 flex items-center gap-2"
+                    >
+                      <ChevronDown size={12} className="rotate-90" />
+                      <span>Volver</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedHospitalId("All");
+                        setFilterMenuSection("main");
+                      }}
+                      className={`w-full px-3 py-1.5 text-xs text-left transition-colors ${
+                        selectedHospitalId === "All"
+                          ? "bg-blue-500/20 text-blue-300 border-l-2 border-blue-500"
+                          : "text-slate-300 hover:bg-slate-800/50"
+                      }`}
+                    >
+                      Todos
+                    </button>
+                    {hospitals.map((hospital) => (
+                      <button
+                        key={hospital._id}
+                        onClick={() => {
+                          setSelectedHospitalId(hospital._id);
+                          setFilterMenuSection("main");
+                        }}
+                        className={`w-full px-3 py-1.5 text-xs text-left transition-colors ${
+                          selectedHospitalId === hospital._id
+                            ? "bg-blue-500/20 text-blue-300 border-l-2 border-blue-500"
+                            : "text-slate-300 hover:bg-slate-800/50"
+                        }`}
+                      >
+                        {hospital.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
           </div>
         </div>
 
@@ -175,7 +419,10 @@ export const RecordsView = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
                     key={patient._id}
-                    onClick={() => setSelectedPatient(patient)}
+                    onClick={() => {
+                      setOpenMenuId(null);
+                      setSelectedPatient(patient);
+                    }}
                     className="group/row hover:bg-white/[0.02] transition-colors cursor-pointer rounded-2xl relative"
                   >
                     <td className="py-4 px-6 bg-slate-900/40 rounded-l-2xl border-y border-l border-slate-800/50 group-hover/row:border-slate-700/50">
@@ -194,7 +441,7 @@ export const RecordsView = () => {
                       </div>
                     </td>
                     <td className="py-4 px-4 bg-slate-900/40 border-y border-slate-800/50 text-sm font-medium text-slate-400 group-hover/row:border-slate-700/50 group-hover/row:text-slate-300 transition-colors">
-                      {patient.hospitalId}
+                      {getHospitalName(patient.hospitalId)}
                     </td>
                     <td className="py-4 px-4 bg-slate-900/40 border-y border-slate-800/50 group-hover/row:border-slate-700/50">
                       <span className="text-xs px-3 py-1.5 bg-slate-950/50 border border-slate-800 rounded-lg text-slate-300 font-bold uppercase tracking-wider group-hover/row:border-slate-700 transition-colors shadow-inner max-w-[200px] block truncate">
@@ -235,12 +482,44 @@ export const RecordsView = () => {
                       </div>
                     </td>
                     <td className="py-4 px-6 bg-slate-900/40 rounded-r-2xl border-y border-r border-slate-800/50 text-right group-hover/row:border-slate-700/50">
-                      <motion.button
-                        whileHover={{ x: 5 }}
-                        className="p-2 text-slate-500 hover:text-white bg-slate-950/50 hover:bg-slate-800 rounded-lg transition-colors ring-1 ring-slate-800"
-                      >
-                        <ChevronRight size={18} />
-                      </motion.button>
+                      <div className="relative">
+                        <motion.button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenMenuId(
+                              openMenuId === patient._id ? null : patient._id,
+                            );
+                          }}
+                          className="p-2 text-slate-500 hover:text-white bg-slate-950/50 hover:bg-slate-800 rounded-lg transition-colors ring-1 ring-slate-800"
+                        >
+                          <MoreVertical size={18} />
+                        </motion.button>
+
+                        {/* Dropdown Menu */}
+                        {openMenuId === patient._id && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-700 rounded-lg shadow-lg z-50"
+                          >
+                            <button
+                              onClick={(e) => handleEditPatient(patient, e)}
+                              className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors border-b border-slate-700"
+                            >
+                              <Edit size={16} />
+                              Editar
+                            </button>
+                            <button
+                              onClick={(e) => handleDeletePatient(patient, e)}
+                              className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-red-950 hover:text-red-300 transition-colors"
+                            >
+                              <Trash2 size={16} />
+                              Eliminar
+                            </button>
+                          </motion.div>
+                        )}
+                      </div>
                     </td>
                   </motion.tr>
                 ))}
@@ -340,6 +619,18 @@ export const RecordsView = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* Add/Edit Patient Modal */}
+      <AddPatientModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingPatient(null);
+        }}
+        onSuccess={handleModalSuccess}
+        editingPatient={editingPatient}
+        hospitals={hospitals}
+      />
     </motion.div>
   );
 };
