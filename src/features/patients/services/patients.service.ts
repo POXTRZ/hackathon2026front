@@ -1,0 +1,84 @@
+import { axiosInstance } from "../../../api/axios.instance";
+import { API_ENDPOINTS } from "../../../api/api.constants";
+import type { Patient } from "../../../types";
+
+export const patientsService = {
+  /**
+   * Obtiene la lista de todos los pacientes
+   */
+  getAllPatients: async (): Promise<Patient[]> => {
+    try {
+      const response = await axiosInstance.get<Patient[]>(
+        API_ENDPOINTS.PATIENTS,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Obtiene un paciente por ID
+   */
+  getPatientById: async (id: string): Promise<Patient> => {
+    try {
+      const response = await axiosInstance.get<Patient>(
+        `${API_ENDPOINTS.PATIENTS}/${id}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching patient ${id}:`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Crea un nuevo paciente
+   */
+  createPatient: async (
+    patient: Omit<Patient, "_id" | "createdAt" | "updatedAt">,
+  ): Promise<Patient> => {
+    try {
+      const response = await axiosInstance.post<Patient>(
+        API_ENDPOINTS.PATIENTS,
+        patient,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating patient:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Actualiza un paciente existente
+   */
+  updatePatient: async (
+    id: string,
+    patient: Partial<Patient>,
+  ): Promise<Patient> => {
+    try {
+      const response = await axiosInstance.put<Patient>(
+        `${API_ENDPOINTS.PATIENTS}/${id}`,
+        patient,
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating patient ${id}:`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Elimina un paciente
+   */
+  deletePatient: async (id: string): Promise<void> => {
+    try {
+      await axiosInstance.delete(`${API_ENDPOINTS.PATIENTS}/${id}`);
+    } catch (error) {
+      console.error(`Error deleting patient ${id}:`, error);
+      throw error;
+    }
+  },
+};
