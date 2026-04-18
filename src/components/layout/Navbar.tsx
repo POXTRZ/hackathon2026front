@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { ShieldCheck, Brain, FileText, Eye, User } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -8,11 +9,46 @@ export const Navbar = ({
   activeTab: string;
   setActiveTab: (t: string) => void;
 }) => {
+=======
+import React, { useEffect } from "react";
+import { ShieldCheck, Brain, FileText, Eye, User } from "lucide-react";
+import { motion } from "framer-motion";
+import { useAuthStore } from "../../store/useAuthStore";
+import { authService } from "../../features/login/services/auth.service";
+
+export const Navbar = ({
+  activeTab,
+  setActiveTab,
+}: {
+  activeTab: string;
+  setActiveTab: (t: string) => void;
+}) => {
+  const { doctor, logout } = useAuthStore();
+
+  useEffect(() => {
+    if (doctor) {
+      console.log("====== Navbar - Doctor data updated:", doctor);
+      console.log("====== Navbar - Doctor name:", doctor.name);
+      console.log("====== Navbar - Hospital name:", doctor.hospitalName);
+    } else {
+      console.log("====== Navbar - No doctor data");
+    }
+  }, [doctor]);
+
+>>>>>>> edd472bd21f9bfb2004c4c092ac8c3cc76ead16e
   const tabs = [
     { id: "reports", label: "Reportes AI", icon: Brain },
     { id: "records", label: "Expedientes", icon: FileText },
     { id: "vision", label: "Visión", icon: Eye },
   ];
+
+  const handleLogout = () => {
+    // Clear auth store first (triggers App.tsx to show SignInView)
+    logout();
+    // Then clear token from localStorage and axios headers
+    authService.logout();
+    console.log("Sesión cerrada correctamente");
+  };
 
   return (
     <motion.div
@@ -27,18 +63,21 @@ export const Navbar = ({
         <motion.div
           whileHover={{ rotate: 180 }}
           transition={{ duration: 0.4 }}
-          className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 flex-shrink-0 relative overflow-hidden"
+          className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 flex-shrink-0 relative overflow-hidden bg-transparent"
         >
-          <div className="absolute inset-0 bg-white/20 translate-y-full hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
-          <ShieldCheck className="text-white" size={28} />
+          <img
+            src="/favicon.svg"
+            alt="Nexus logo"
+            className="w-full h-full object-contain"
+          />
         </motion.div>
 
         <div className="hidden lg:block overflow-hidden">
           <h1 className="font-extrabold text-xl tracking-tighter text-white leading-none">
-            MOSCATI
+            LUMY
           </h1>
           <span className="text-blue-500 font-medium text-xs tracking-widest uppercase">
-            Hub Digital
+            Med Digital
           </span>
         </div>
       </div>
@@ -93,14 +132,24 @@ export const Navbar = ({
             </div>
             <div>
               <p className="text-sm font-bold text-white tracking-tight">
+<<<<<<< HEAD
                 Dr. Riva
               </p>
               <p className="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">
                 Moscati Juriquilla
+=======
+                {doctor?.name || "Dr."}
+              </p>
+              <p className="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">
+                {doctor?.hospitalName || "Hospital"}
+>>>>>>> edd472bd21f9bfb2004c4c092ac8c3cc76ead16e
               </p>
             </div>
           </div>
-          <button className="w-full py-2.5 bg-slate-950 hover:bg-red-500/10 text-slate-400 hover:text-red-400 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-colors ring-1 ring-slate-800 hover:ring-red-500/30">
+          <button
+            onClick={handleLogout}
+            className="w-full py-2.5 bg-slate-950 hover:bg-red-500/10 text-slate-400 hover:text-red-400 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-colors ring-1 ring-slate-800 hover:ring-red-500/30"
+          >
             Cerrar Sesión
           </button>
         </motion.div>

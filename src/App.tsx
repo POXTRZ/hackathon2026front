@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿import { useState } from "react";
+=======
+﻿import React, { useState, useEffect } from "react";
+>>>>>>> edd472bd21f9bfb2004c4c092ac8c3cc76ead16e
 import { Activity, ShieldCheck, Brain, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -9,9 +13,56 @@ import { MetricCard } from "./components/ui/MetricCard";
 import { ReportsView } from "./features/reports/components/ReportsView";
 import { RecordsView } from "./features/patients/components/RecordsView";
 import { VisionView } from "./features/vision/components/VisionView";
+<<<<<<< HEAD
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("reports");
+=======
+import { SignInView } from "./features/login/components/SignInView";
+import { authService } from "./features/login/services/auth.service";
+import { useAuthStore } from "./store/useAuthStore";
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState("reports");
+  const doctor = useAuthStore((state) => state.doctor);
+  const token = useAuthStore((state) => state.token);
+
+  // Debug effect to monitor doctor state changes
+  useEffect(() => {
+    console.log("App - Doctor state changed:", doctor);
+  }, [doctor]);
+
+  // Initialize auth on app load
+  useEffect(() => {
+    // Rehydrate state from localStorage
+    useAuthStore.persist.rehydrate();
+
+    // Initialize auth token in axios headers
+    authService.initializeAuthToken();
+
+    // If there's a token but no doctor, make sure the doctor is restored
+    const storedToken = authService.getAuthToken();
+    if (storedToken && !doctor) {
+      // Token exists but doctor data might not be loaded yet due to async rehydration
+      // Wait a moment for Zustand to rehydrate from localStorage
+      const timer = setTimeout(() => {
+        // Check again after rehydration
+        const state = useAuthStore.getState();
+        if (!state.doctor) {
+          // If still no doctor, clear the token for security
+          authService.logout();
+          useAuthStore.getState().logout();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  // Si no hay doctor autenticado, mostrar SignInView
+  if (!doctor) {
+    return <SignInView />;
+  }
+>>>>>>> edd472bd21f9bfb2004c4c092ac8c3cc76ead16e
 
   return (
     <div className="flex h-screen bg-[#060a16] text-slate-200 overflow-hidden font-sans selection:bg-blue-500/30 selection:text-white">
@@ -29,7 +80,7 @@ export default function App() {
             <div>
               <p className="text-blue-500/80 text-[10px] font-black uppercase tracking-[0.3em] mb-3 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span>
-                Moscati Digital Health Hub
+                Lumy Hub
               </p>
               <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-500 tracking-tighter drop-shadow-sm">
                 {activeTab === "reports"
@@ -58,6 +109,7 @@ export default function App() {
             </div>
           </motion.div>
 
+<<<<<<< HEAD
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -93,6 +145,45 @@ export default function App() {
               trend="-5%"
             />
           </motion.div>
+=======
+          {activeTab == "reports" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+            >
+              <MetricCard
+                icon={Brain}
+                label="Reducción Burnout"
+                value="2.5h / día"
+                color="blue"
+                trend="+15%"
+              />
+              <MetricCard
+                icon={ShieldCheck}
+                label="Precisión Qx."
+                value="100.0%"
+                color="emerald"
+                trend="Optimo"
+              />
+              <MetricCard
+                icon={Activity}
+                label="Capacidad Nido"
+                value="84%"
+                color="amber"
+                trend="Normal"
+              />
+              <MetricCard
+                icon={AlertCircle}
+                label="Alertas Críticas"
+                value="02"
+                color="red"
+                trend="-5%"
+              />
+            </motion.div>
+          )}
+>>>>>>> edd472bd21f9bfb2004c4c092ac8c3cc76ead16e
 
           <div className="relative z-10 min-h-[500px]">
             <AnimatePresence mode="wait">
