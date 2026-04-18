@@ -1,6 +1,5 @@
 import React from 'react';
 import { 
-  ShieldCheck, 
   Brain, 
   FileText, 
   Eye, 
@@ -28,18 +27,17 @@ export const Navbar = ({ activeTab, setActiveTab }: { activeTab: string, setActi
         <motion.div 
           whileHover={{ rotate: 180 }}
           transition={{ duration: 0.4 }}
-          className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 flex-shrink-0 relative overflow-hidden"
+          className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 flex-shrink-0 relative overflow-hidden bg-transparent"
         >
-          <div className="absolute inset-0 bg-white/20 translate-y-full hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
-          <ShieldCheck className="text-white" size={28} />
+          <img src="/favicon.svg" alt="Nexus logo" className="w-full h-full object-contain" />
         </motion.div>
         
         <div className="hidden lg:block overflow-hidden">
           <h1 className="font-extrabold text-xl tracking-tighter text-white leading-none">
-            MOSCATI
+            LUMY
           </h1>
           <span className="text-blue-500 font-medium text-xs tracking-widest uppercase">
-            Hub Digital
+            Med Digital
           </span>
         </div>
       </div>
@@ -87,7 +85,7 @@ export const Navbar = ({ activeTab, setActiveTab }: { activeTab: string, setActi
             </div>
             <div>
               <p className="text-sm font-bold text-white tracking-tight">Dr. Riva</p>
-              <p className="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">Moscati Juriquilla</p>
+              <p className="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">Lumy Juriquilla</p>
             </div>
           </div>
           <button className="w-full py-2.5 bg-slate-950 hover:bg-red-500/10 text-slate-400 hover:text-red-400 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-colors ring-1 ring-slate-800 hover:ring-red-500/30">
