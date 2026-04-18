@@ -50,6 +50,7 @@ export default function App() {
             </div>
           </motion.div>
 
+        {activeTab == 'reports' && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -61,6 +62,7 @@ export default function App() {
             <MetricCard icon={Activity} label="Capacidad Nido" value="84%" color="amber" trend="Normal" />
             <MetricCard icon={AlertCircle} label="Alertas Críticas" value="02" color="red" trend="-5%" />
           </motion.div>
+          )}
 
           <div className="relative z-10 min-h-[500px]">
             <AnimatePresence mode="wait">
