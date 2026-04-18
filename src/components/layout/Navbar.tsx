@@ -1,22 +1,21 @@
-import React from 'react';
-import { 
-  ShieldCheck, 
-  Brain, 
-  FileText, 
-  Eye, 
-  User 
-} from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ShieldCheck, Brain, FileText, Eye, User } from "lucide-react";
+import { motion } from "framer-motion";
 
-export const Navbar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (t: string) => void }) => {
+export const Navbar = ({
+  activeTab,
+  setActiveTab,
+}: {
+  activeTab: string;
+  setActiveTab: (t: string) => void;
+}) => {
   const tabs = [
-    { id: 'reports', label: 'Reportes AI', icon: Brain },
-    { id: 'records', label: 'Expedientes', icon: FileText },
-    { id: 'vision', label: 'Visión', icon: Eye },
+    { id: "reports", label: "Reportes AI", icon: Brain },
+    { id: "records", label: "Expedientes", icon: FileText },
+    { id: "vision", label: "Visión", icon: Eye },
   ];
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       className="w-20 lg:w-72 bg-slate-950/80 backdrop-blur-3xl border-r border-slate-800 flex flex-col items-center lg:items-start py-8 relative z-50"
@@ -25,7 +24,7 @@ export const Navbar = ({ activeTab, setActiveTab }: { activeTab: string, setActi
       <div className="absolute top-0 left-0 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px] pointer-events-none" />
 
       <div className="px-6 mb-12 flex items-center gap-4 relative z-10 w-full">
-        <motion.div 
+        <motion.div
           whileHover={{ rotate: 180 }}
           transition={{ duration: 0.4 }}
           className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 flex-shrink-0 relative overflow-hidden"
@@ -33,7 +32,7 @@ export const Navbar = ({ activeTab, setActiveTab }: { activeTab: string, setActi
           <div className="absolute inset-0 bg-white/20 translate-y-full hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
           <ShieldCheck className="text-white" size={28} />
         </motion.div>
-        
+
         <div className="hidden lg:block overflow-hidden">
           <h1 className="font-extrabold text-xl tracking-tighter text-white leading-none">
             MOSCATI
@@ -62,21 +61,28 @@ export const Navbar = ({ activeTab, setActiveTab }: { activeTab: string, setActi
                   className="absolute inset-0 bg-blue-600/90 rounded-2xl shadow-xl shadow-blue-600/30 ring-1 ring-blue-500"
                 />
               )}
-              <div className={`relative flex items-center justify-center lg:justify-start gap-4 px-4 py-4 rounded-2xl transition-colors duration-300 ${
-                isActive 
-                ? 'text-white' 
-                : 'text-slate-400 group-hover:bg-slate-900/50 group-hover:text-slate-200'
-              }`}>
-                <tab.icon size={22} className={isActive ? 'animate-pulse-slow' : ''} />
-                <span className="hidden lg:block font-bold text-sm tracking-wide">{tab.label}</span>
+              <div
+                className={`relative flex items-center justify-center lg:justify-start gap-4 px-4 py-4 rounded-2xl transition-colors duration-300 ${
+                  isActive
+                    ? "text-white"
+                    : "text-slate-400 group-hover:bg-slate-900/50 group-hover:text-slate-200"
+                }`}
+              >
+                <tab.icon
+                  size={22}
+                  className={isActive ? "animate-pulse-slow" : ""}
+                />
+                <span className="hidden lg:block font-bold text-sm tracking-wide">
+                  {tab.label}
+                </span>
               </div>
             </motion.button>
-          )
+          );
         })}
       </nav>
 
       <div className="p-4 w-full relative z-10">
-        <motion.div 
+        <motion.div
           whileHover={{ y: -2 }}
           className="bg-slate-900/60 backdrop-blur-md rounded-2xl p-4 hidden lg:block border border-slate-800 hover:border-slate-700 transition-all cursor-pointer"
         >
@@ -86,8 +92,12 @@ export const Navbar = ({ activeTab, setActiveTab }: { activeTab: string, setActi
               <User className="text-blue-400 relative z-10" size={20} />
             </div>
             <div>
-              <p className="text-sm font-bold text-white tracking-tight">Dr. Riva</p>
-              <p className="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">Moscati Juriquilla</p>
+              <p className="text-sm font-bold text-white tracking-tight">
+                Dr. Riva
+              </p>
+              <p className="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">
+                Moscati Juriquilla
+              </p>
             </div>
           </div>
           <button className="w-full py-2.5 bg-slate-950 hover:bg-red-500/10 text-slate-400 hover:text-red-400 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-colors ring-1 ring-slate-800 hover:ring-red-500/30">

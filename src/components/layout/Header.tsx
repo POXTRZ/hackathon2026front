@@ -1,10 +1,9 @@
-import React from 'react';
-import { Layers, Bell, Settings } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Layers, Bell, Settings } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const Header = () => {
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       className="h-20 px-8 flex items-center justify-between border-b border-slate-800/80 sticky top-0 bg-[#0a0f1d]/70 backdrop-blur-2xl z-40 mx-4 mt-4 rounded-3xl lg:rounded-b-none lg:mx-0 lg:mt-0 lg:rounded-none ring-1 ring-slate-800/50"
@@ -20,11 +19,13 @@ export const Header = () => {
           </span>
         </div>
       </div>
-      
+
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-2 text-slate-300 px-3 py-1.5 rounded-lg bg-slate-950/40 ring-1 ring-slate-800">
           <Layers size={16} className="text-blue-400" />
-          <span className="text-xs font-bold tracking-widest uppercase text-slate-400">Node: <span className="text-white">MX-QTRO-01</span></span>
+          <span className="text-xs font-bold tracking-widest uppercase text-slate-400">
+            Node: <span className="text-white">MX-QTRO-01</span>
+          </span>
         </div>
         <div className="h-8 w-[1px] bg-slate-800/80"></div>
         <button className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-900 rounded-xl transition-colors ring-1 ring-transparent hover:ring-slate-800">

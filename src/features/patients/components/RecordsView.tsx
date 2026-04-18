@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   ChevronRight,
@@ -53,13 +53,6 @@ export const RecordsView = () => {
       default:
         return "Baja";
     }
-  };
-
-  // Helper function to get status based on diagnosis
-  const getPatientStatus = (diagnosis: string): string => {
-    if (diagnosis.toLowerCase().includes("urgencia")) return "Urgencia";
-    if (diagnosis.toLowerCase().includes("crítico")) return "Crítico";
-    return "Monitoreo";
   };
 
   // Filter patients by search query
