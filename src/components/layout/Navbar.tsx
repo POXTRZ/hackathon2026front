@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useEffect } from "react";
 import { ShieldCheck, Brain, FileText, Eye, User } from "lucide-react";
 import { motion } from "framer-motion";
@@ -23,16 +22,6 @@ export const Navbar = ({
       console.log("====== Navbar - No doctor data");
     }
   }, [doctor]);
-=======
-import React from 'react';
-import { 
-  Brain, 
-  FileText, 
-  Eye, 
-  User 
-} from 'lucide-react';
-import { motion } from 'framer-motion';
->>>>>>> 9c0b05332e47e929dcc8504040445a47fd3f8cbd
 
   const tabs = [
     { id: "reports", label: "Reportes AI", icon: Brain },
@@ -63,7 +52,11 @@ import { motion } from 'framer-motion';
           transition={{ duration: 0.4 }}
           className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 flex-shrink-0 relative overflow-hidden bg-transparent"
         >
-          <img src="/favicon.svg" alt="Nexus logo" className="w-full h-full object-contain" />
+          <img
+            src="/favicon.svg"
+            alt="Nexus logo"
+            className="w-full h-full object-contain"
+          />
         </motion.div>
 
         <div className="hidden lg:block overflow-hidden">
@@ -125,17 +118,12 @@ import { motion } from 'framer-motion';
               <User className="text-blue-400 relative z-10" size={20} />
             </div>
             <div>
-<<<<<<< HEAD
               <p className="text-sm font-bold text-white tracking-tight">
                 {doctor?.name || "Dr."}
               </p>
               <p className="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">
                 {doctor?.hospitalName || "Hospital"}
               </p>
-=======
-              <p className="text-sm font-bold text-white tracking-tight">Dr. Riva</p>
-              <p className="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">Lumy Juriquilla</p>
->>>>>>> 9c0b05332e47e929dcc8504040445a47fd3f8cbd
             </div>
           </div>
           <button

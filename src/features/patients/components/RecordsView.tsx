@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
-import { Search, ChevronRight, Zap, Volume2, MessageSquare } from 'lucide-react';
-import { motion } from 'framer-motion';
-
-const REGIONAL_PATIENTS = [
-  { id: 'M-001', name: 'Ricardo Alarcón', hosp: 'Nexus Juriquilla', status: 'Post-Op', priority: 'Media' },
-  { id: 'M-002', name: 'Sofía Valdés', hosp: 'Nexus Centro', status: 'UCI', priority: 'Alta' },
-  { id: 'M-003', name: 'Andrés Manuel P.', hosp: 'Nexus Juriquilla', status: 'Consulta', priority: 'Baja' },
-  { id: 'M-004', name: 'Mariana Sosa', hosp: 'Regional Bajío', status: 'Urgencias', priority: 'Alta' },
-];
+import React, { useState, useEffect } from "react";
+import {
+  Search,
+  MoreVertical,
+  Plus,
+  Zap,
+  Volume2,
+  MessageSquare,
+  AlertCircle,
+  Edit,
+  Trash2,
+  ChevronDown,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { patientsService } from "../services/patients.service";
+import { AddPatientModal } from "./AddPatients";
+import type { Patient, Hospital } from "../../../types";
 
 export const RecordsView = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -346,17 +353,6 @@ export const RecordsView = () => {
                 )}
               </motion.div>
             )}
-          </div>
-
-          {/* Patient Count */}
-          <div className="px-4 py-2 bg-blue-600/20 border border-blue-500/30 rounded-lg">
-            <p className="text-sm font-semibold text-blue-300">
-              Total:{" "}
-              <span className="text-white font-bold">
-                {filteredPatients.length}
-              </span>{" "}
-              pacientes
-            </p>
           </div>
         </div>
 
