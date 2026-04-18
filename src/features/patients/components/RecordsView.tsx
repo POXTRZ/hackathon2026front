@@ -354,6 +354,17 @@ export const RecordsView = () => {
               </motion.div>
             )}
           </div>
+
+          {/* Patient Count */}
+          <div className="px-4 py-2 bg-blue-600/20 border border-blue-500/30 rounded-lg">
+            <p className="text-sm font-semibold text-blue-300">
+              Total:{" "}
+              <span className="text-white font-bold">
+                {filteredPatients.length}
+              </span>{" "}
+              pacientes
+            </p>
+          </div>
         </div>
 
         <div className="overflow-x-auto relative z-10 pb-4 custom-scrollbar">
