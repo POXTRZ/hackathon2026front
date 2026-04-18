@@ -1,20 +1,13 @@
-import React, { useState, useEffect } from "react";
-import {
-  Search,
-  MoreVertical,
-  Plus,
-  Zap,
-  Volume2,
-  MessageSquare,
-  AlertCircle,
-  Edit,
-  Trash2,
-  ChevronDown,
-} from "lucide-react";
-import { motion } from "framer-motion";
-import { patientsService } from "../services/patients.service";
-import { AddPatientModal } from "./AddPatients";
-import type { Patient, Hospital } from "../../../types";
+import React, { useState } from 'react';
+import { Search, ChevronRight, Zap, Volume2, MessageSquare } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const REGIONAL_PATIENTS = [
+  { id: 'M-001', name: 'Ricardo Alarcón', hosp: 'Nexus Juriquilla', status: 'Post-Op', priority: 'Media' },
+  { id: 'M-002', name: 'Sofía Valdés', hosp: 'Nexus Centro', status: 'UCI', priority: 'Alta' },
+  { id: 'M-003', name: 'Andrés Manuel P.', hosp: 'Nexus Juriquilla', status: 'Consulta', priority: 'Baja' },
+  { id: 'M-004', name: 'Mariana Sosa', hosp: 'Regional Bajío', status: 'Urgencias', priority: 'Alta' },
+];
 
 export const RecordsView = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);

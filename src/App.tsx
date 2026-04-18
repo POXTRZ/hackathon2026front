@@ -70,7 +70,7 @@ export default function App() {
             <div>
               <p className="text-blue-500/80 text-[10px] font-black uppercase tracking-[0.3em] mb-3 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span>
-                Moscati Digital Health Hub
+                Nexus Hub
               </p>
               <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-500 tracking-tighter drop-shadow-sm">
                 {activeTab === "reports"

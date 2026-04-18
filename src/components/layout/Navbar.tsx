@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect } from "react";
 import { ShieldCheck, Brain, FileText, Eye, User } from "lucide-react";
 import { motion } from "framer-motion";
@@ -22,6 +23,16 @@ export const Navbar = ({
       console.log("====== Navbar - No doctor data");
     }
   }, [doctor]);
+=======
+import React from 'react';
+import { 
+  Brain, 
+  FileText, 
+  Eye, 
+  User 
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+>>>>>>> 9c0b05332e47e929dcc8504040445a47fd3f8cbd
 
   const tabs = [
     { id: "reports", label: "Reportes AI", icon: Brain },
@@ -50,18 +61,17 @@ export const Navbar = ({
         <motion.div
           whileHover={{ rotate: 180 }}
           transition={{ duration: 0.4 }}
-          className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 flex-shrink-0 relative overflow-hidden"
+          className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 flex-shrink-0 relative overflow-hidden bg-transparent"
         >
-          <div className="absolute inset-0 bg-white/20 translate-y-full hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
-          <ShieldCheck className="text-white" size={28} />
+          <img src="/favicon.svg" alt="Nexus logo" className="w-full h-full object-contain" />
         </motion.div>
 
         <div className="hidden lg:block overflow-hidden">
           <h1 className="font-extrabold text-xl tracking-tighter text-white leading-none">
-            MOSCATI
+            LUMY
           </h1>
           <span className="text-blue-500 font-medium text-xs tracking-widest uppercase">
-            Hub Digital
+            Med Digital
           </span>
         </div>
       </div>
@@ -115,12 +125,17 @@ export const Navbar = ({
               <User className="text-blue-400 relative z-10" size={20} />
             </div>
             <div>
+<<<<<<< HEAD
               <p className="text-sm font-bold text-white tracking-tight">
                 {doctor?.name || "Dr."}
               </p>
               <p className="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">
                 {doctor?.hospitalName || "Hospital"}
               </p>
+=======
+              <p className="text-sm font-bold text-white tracking-tight">Dr. Riva</p>
+              <p className="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">Lumy Juriquilla</p>
+>>>>>>> 9c0b05332e47e929dcc8504040445a47fd3f8cbd
             </div>
           </div>
           <button
